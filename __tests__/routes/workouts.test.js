@@ -79,11 +79,22 @@ describe('Workout Integration Tests', () => {
     const newWorkout1 = await Workout.create(mockWorkout1)
     const newWorkout2 = await Workout.create(mockWorkout2)
 
+    const workoutArray = [newWorkout1, newWorkout2]
+
     const response = await request(app).get('/api/v1/workouts/all')
 
     expect(response.status).toBe(200)
     expect(response.body.workouts.length).toBeGreaterThan(0)
-    expect(response.body.workouts).toBeInstanceOf(Array)
+    workoutArray.forEach(workout => {
+        expect.arrayContaining([
+            expect.objectContaining({
+            _id: String(workout._id),
+            focusArea: workout.focusArea,
+            type: workout.type,
+            level: workout.level,
+            })
+        ])
+    })
   })
 
   test('/GET find a workout by Id', async () => {
@@ -138,8 +149,6 @@ describe('Workout Integration Tests', () => {
       focus_area: 'upper',
       exercises: [mockExercise1, mockExercise2]
     }
-
-    const workouts = [mockExercise1, mockExercise2]
 
     const response = await request(app)
       .post(`/api/v1/workouts/userId/${newUser._id}`)

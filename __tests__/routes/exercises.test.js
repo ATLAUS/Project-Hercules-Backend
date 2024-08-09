@@ -61,7 +61,16 @@ describe("Exercise Integration Tests", () => {
 
         expect(response.status).toBe(200)
         expect(response.body.exercises.length).toBeGreaterThan(0)
-        expect(response.body.exercises).toBeInstanceOf(Array) // repsonse body contains an array of exerciese
+        allExercises.forEach(exercise => {
+            expect.arrayContaining([
+                expect.objectContaining({
+                    _id: String(exercise._id),
+                    name: exercise.name,
+                    rep: exercise.rep,
+                    set: exercise.set
+                })
+            ])
+        })
     })
 
     test("/GET find Exercise by Id", async () => {
